@@ -1,6 +1,8 @@
 # AndroidNFC
 NFC sharing app in Android Environment
 
+![Activity Diagram](http://yuml.me/7dffe4ee.png)
+
 Configure following before running :
 1. Please hardcode the file name until we get UI:
 
