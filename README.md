@@ -25,7 +25,7 @@ Next Steps:
 - [ ] 3. Create UI/code for selecting contacts to share
 - [ ] 4. Developing backend code to share messages.
 - [ ] 5. Developing backend code to share contacts
-- [ ] 6. Developing backend code to share pictures - Parth
+- [x] 6. Developing backend code to share pictures - Parth
 
 
 
