@@ -1,10 +1,10 @@
 # AndroidNFC
 NFC sharing app in Android Environment
 
-![Activity Diagram](http://yuml.me/7dffe4ee.png)
+![Activity Diagram](http://yuml.me/bd9d42d5.png)
 https://yuml.me/diagram/activity/draw
 
-	(start)->(Main Activity)-><a>[done]->(end),<a>[send]->(Send File)->|b|,<a>[receive]->(Recv File)->|b|,|b|->(Display Message)->(Main Activity)
+	(start)->(Main Activity)-><a>[done]->(end),<a>[send pic]->(Send Picture)->(Display Message),<a>[send message]->(Send Message)->(Display Message),<a>[send contact]->(Send Contact)->(Display Message),(Display Message)->(Main Activity)
 
 
 Configure following before running :
