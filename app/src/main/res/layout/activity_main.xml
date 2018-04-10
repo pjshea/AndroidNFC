@@ -6,7 +6,7 @@
         <TextView android:id="@+id/textview"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Get File Name"
+            android:text="Main Activity"
             android:textSize="18dp"
             android:gravity="center"
             android:layout_marginTop="10dp"
@@ -14,38 +14,34 @@
         <RelativeLayout android:id="@+id/relativeLayout1"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content">
-            <EditText
-                android:layout_alignParentLeft="true"
-                android:hint="EditText"
-                android:id="@+id/editText"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginTop="15dp"
-                android:imeOptions="actionDone"
-                android:ems="10"
-                android:inputType="textPersonName"
-                android:layout_toLeftOf="@+id/skipButton" >
-            </EditText>
 
-            <Button
-                android:id="@+id/skipButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="10dp"
-                android:onClick="sendMessage"
-                android:text="Send"
-                android:textSize="18dp"></Button>
         </RelativeLayout>
 
      <Button
          android:layout_width="fill_parent"
          android:layout_height="165dp"
-         android:onClick="sendFile"
+         android:onClick="sendPicture"
          android:padding="8dp"
-         android:text="Send File" />
+         android:text="Send Picture"
+         android:textSize="24dp" />
+
+     <Button
+         android:id="@+id/button2"
+         android:layout_width="match_parent"
+         android:layout_height="165dp"
+         android:onClick="sendMessage"
+         android:padding="8dp"
+         android:text="Send Message"
+         android:textSize="24dp"  />
+
+     <Button
+         android:id="@+id/button"
+         android:layout_width="match_parent"
+         android:layout_height="165dp"
+         android:onClick="sendContact"
+         android:padding="8dp"
+         android:text="Send Contact"
+         android:textSize="24dp" />
 
 
  </LinearLayout>

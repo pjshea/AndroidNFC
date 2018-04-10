@@ -1,5 +1,6 @@
 package edu.njit.cs656.nfcapp;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -19,12 +20,7 @@ import java.io.File;
 
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
-public class MainActivity extends AppCompatActivity {
-
-    private EditText edittext;
-    private Uri[] mFileUris = new Uri[10];
-    private NfcAdapter mNfcAdapter;
-    private FileUriCallback mFileUriCallback;
+public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,69 +46,35 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        edittext = findViewById(R.id.editText);
     }
 
-    public void sendFile(View view) {
-        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+    public void sendPicture(View view) {
 
-        if(!mNfcAdapter.isEnabled()){
-            // NFC is disabled, show the settings UI
-            // to enable NFC
-            Toast.makeText(this, "Please enable NFC.",
-                    Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(Settings.ACTION_NFC_SETTINGS));
-        }
-        // Check whether Android Beam feature is enabled on device
-        else if(!mNfcAdapter.isNdefPushEnabled()) {
-            // Android Beam is disabled, show the settings UI
-            // to enable Android Beam
-            Toast.makeText(this, "Please enable Android Beam.",
-                    Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(Settings.ACTION_NFCSHARING_SETTINGS));
-        }
-        else {
-            mFileUriCallback = new FileUriCallback();
-            mNfcAdapter.setBeamPushUrisCallback(mFileUriCallback, this);
-        }
-    }
-//transferimage
-    private class FileUriCallback implements
-            NfcAdapter.CreateBeamUrisCallback {
-        public FileUriCallback() {
-            String transferFile = "20180219_182819_HDR.jpg";
-            File extDir = Environment
-                    .getExternalStoragePublicDirectory(
-                            Environment.DIRECTORY_PICTURES);
-            File requestFile = new File(extDir, transferFile);
-            requestFile.setReadable(true, false);
-            // Get a URI for the File and add it to the list of URIs
-            Uri fileUri = Uri.fromFile(requestFile);
-            if (fileUri != null) {
-                mFileUris[0] = fileUri;
-                Log.i("My Activity", "File URI available for transfer.");
-            } else {
-                Log.e("My Activity", "No File URI available for file.");
-            }
-        }
+        Intent inent = new Intent(this, SendPictureActivity.class);
 
-        @Override
-        public Uri[] createBeamUris(NfcEvent event) {
-            return mFileUris;
-        }
+        // calling an activity using <intent-filter> action name
+        //  Intent inent = new Intent("com.hmkcode.android.ANOTHER_ACTIVITY");
+
+        startActivity(inent);
     }
-    
-    /** Called when the user taps the Send button */
+
+    public void sendContact(View view) {
+
+        Intent inent = new Intent(this, SendPictureActivity.class);
+
+        // calling an activity using <intent-filter> action name
+        //  Intent inent = new Intent("com.hmkcode.android.ANOTHER_ACTIVITY");
+
+        startActivity(inent);
+    }
+
     public void sendMessage(View view) {
 
-        Intent intent = new Intent(this, DisplayMessageActivity.class);
-        EditText editText = findViewById(R.id.editText);
+        Intent inent = new Intent(this, SendPictureActivity.class);
 
-        editText.setOnEditorActionListener(new DoneOnEditorActionListener());
+        // calling an activity using <intent-filter> action name
+        //  Intent inent = new Intent("com.hmkcode.android.ANOTHER_ACTIVITY");
 
-        String message = editText.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE, message);
-        startActivity(intent);
+        startActivity(inent);
     }
-
 }

@@ -24,8 +24,34 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".SendContactActivity"
+            android:label="Send Contact" >
+            <intent-filter>
+                <action android:name="edu.njit.cs656.nfcapp.SEND_CONTACT" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".SendMessageActivity"
+            android:label="Send Message" >
+            <intent-filter>
+                <action android:name="edu.njit.cs656.nfcapp.SEND_PICTURE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".SendPictureActivity"
+            android:label="Send Picture" >
+            <intent-filter>
+                <action android:name="edu.njit.cs656.nfcapp.SEND_PICTURE" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
