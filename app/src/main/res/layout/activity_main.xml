@@ -42,10 +42,10 @@
 
      <Button
          android:layout_width="fill_parent"
-         android:layout_height="wrap_content"
+         android:layout_height="165dp"
+         android:onClick="sendFile"
          android:padding="8dp"
-         android:text="Send File"
-         android:onClick="sendFile" />
+         android:text="Send File" />
 
 
  </LinearLayout>

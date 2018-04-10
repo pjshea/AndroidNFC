@@ -1,4 +1,4 @@
-package com.example.parth.myfirstapp;
+package edu.njit.cs656.nfcapp;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
