@@ -1,6 +1,7 @@
 package edu.njit.cs656.nfcapp;
 
 import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -27,15 +28,7 @@ import java.util.logging.Logger;
 
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
-public class MainActivity extends AppCompatActivity {
-
-    private EditText edittext;
-    private Uri[] mFileUris = new Uri[10];
-    private NfcAdapter mNfcAdapter;
-    private FileUriCallback mFileUriCallback;;
-
-    private int PICK_IMAGE_REQUEST = 1;
-    private String realPath = "";
+public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,81 +54,35 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        edittext = findViewById(R.id.editText);
-        edittext.setEnabled(false);
     }
 
-    public void sendFile(View view) {
-        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+    public void sendPicture(View view) {
 
-        if(!mNfcAdapter.isEnabled()){
-            // NFC is disabled, show the settings UI
-            // to enable NFC
-            Toast.makeText(this, "Please enable NFC.",
-                    Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(Settings.ACTION_NFC_SETTINGS));
-        }
-        // Check whether Android Beam feature is enabled on device
-        else if(!mNfcAdapter.isNdefPushEnabled()) {
-            // Android Beam is disabled, show the settings UI
-            // to enable Android Beam
-            Toast.makeText(this, "Please enable Android Beam.",
-                    Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(Settings.ACTION_NFCSHARING_SETTINGS));
-        }
-        else {
-            mFileUriCallback = new FileUriCallback();
-            mNfcAdapter.setBeamPushUrisCallback(mFileUriCallback, this);
-        }
+        Intent inent = new Intent(this, SendPictureActivity.class);
+
+        // calling an activity using <intent-filter> action name
+        //  Intent inent = new Intent("com.hmkcode.android.ANOTHER_ACTIVITY");
+
+        startActivity(inent);
     }
 
-    private class FileUriCallback implements
-            NfcAdapter.CreateBeamUrisCallback {
-        public FileUriCallback() {
+    public void sendContact(View view) {
 
-            if(realPath != "") {
-                File requestFile = new File(realPath);
-                requestFile.setReadable(true, false);
-                Uri fileUri = Uri.fromFile(requestFile);
-                System.out.println("FileUri: "+fileUri);
-                if (fileUri != null) {
-                    mFileUris[0] = fileUri;
-                    Log.i("Main Activity", "File URI available for transfer.");
-                } else {
-                    Log.e("Main Activity", "No File URI available for file.");
-                }
-            }
-            else{
-                Log.e("Main Activity", "No File selected for transfer.");
-            }
-            // Get a URI for the File and add it to the list of URIs
-        }
-        @Override
-        public Uri[] createBeamUris(NfcEvent event) {
-            return mFileUris;
-        }
+        Intent inent = new Intent(this, SendPictureActivity.class);
+
+        // calling an activity using <intent-filter> action name
+        //  Intent inent = new Intent("com.hmkcode.android.ANOTHER_ACTIVITY");
+
+        startActivity(inent);
     }
 
-    public void browsePhotos(View view){
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+    public void sendMessage(View view) {
+
+        Intent inent = new Intent(this, SendPictureActivity.class);
+
+        // calling an activity using <intent-filter> action name
+        //  Intent inent = new Intent("com.hmkcode.android.ANOTHER_ACTIVITY");
+
+        startActivity(inent);
     }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            Uri uri = data.getData();
-            realPath = RealPathUtil.getRealPathFromURI(this, uri);
-            Log.i("Main Activity", "Real Path: "+realPath);
-
-            // Capture the layout's TextView and set the string as its text
-            edittext.setText(realPath);
-
-        }
-    }
-
 }
