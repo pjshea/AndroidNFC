@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.parth.myfirstapp.DisplayMessageActivity">
+    tools:context="edu.njit.cs656.nfcapp.DisplayMessageActivity">
 
     <TextView
         android:id="@+id/textView"

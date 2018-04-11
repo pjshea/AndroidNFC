@@ -1,36 +1,21 @@
-package com.example.parth.myfirstapp;
+package edu.njit.cs656.nfcapp;
 
-import android.Manifest;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.FeatureInfo;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
 import android.os.Build;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
@@ -91,11 +76,11 @@ public class MainActivity extends AppCompatActivity {
             mNfcAdapter.setBeamPushUrisCallback(mFileUriCallback, this);
         }
     }
-//transferimage
+
     private class FileUriCallback implements
             NfcAdapter.CreateBeamUrisCallback {
         public FileUriCallback() {
-            String transferFile = "20180219_182819_HDR.jpg";
+            String transferFile = "parth.jpg";
             File extDir = Environment
                     .getExternalStoragePublicDirectory(
                             Environment.DIRECTORY_PICTURES);

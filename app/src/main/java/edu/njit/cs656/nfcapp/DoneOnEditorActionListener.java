@@ -1,4 +1,4 @@
-package com.example.parth.myfirstapp;
+package edu.njit.cs656.nfcapp;
 
 import android.content.Context;
 import android.view.KeyEvent;
