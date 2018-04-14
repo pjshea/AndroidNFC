@@ -1,21 +1,29 @@
 package edu.njit.cs656.nfcapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
 import android.os.Build;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.logging.Logger;
 
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
@@ -24,7 +32,10 @@ public class MainActivity extends AppCompatActivity {
     private EditText edittext;
     private Uri[] mFileUris = new Uri[10];
     private NfcAdapter mNfcAdapter;
-    private FileUriCallback mFileUriCallback;
+    private FileUriCallback mFileUriCallback;;
+
+    private int PICK_IMAGE_REQUEST = 1;
+    private String realPath = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         edittext = findViewById(R.id.editText);
+        edittext.setEnabled(false);
     }
 
     public void sendFile(View view) {
@@ -80,39 +92,50 @@ public class MainActivity extends AppCompatActivity {
     private class FileUriCallback implements
             NfcAdapter.CreateBeamUrisCallback {
         public FileUriCallback() {
-            String transferFile = "parth.jpg";
-            File extDir = Environment
-                    .getExternalStoragePublicDirectory(
-                            Environment.DIRECTORY_PICTURES);
-            File requestFile = new File(extDir, transferFile);
-            requestFile.setReadable(true, false);
-            // Get a URI for the File and add it to the list of URIs
-            Uri fileUri = Uri.fromFile(requestFile);
-            if (fileUri != null) {
-                mFileUris[0] = fileUri;
-                Log.i("My Activity", "File URI available for transfer.");
-            } else {
-                Log.e("My Activity", "No File URI available for file.");
-            }
-        }
 
+            if(realPath != "") {
+                File requestFile = new File(realPath);
+                requestFile.setReadable(true, false);
+                Uri fileUri = Uri.fromFile(requestFile);
+                System.out.println("FileUri: "+fileUri);
+                if (fileUri != null) {
+                    mFileUris[0] = fileUri;
+                    Log.i("Main Activity", "File URI available for transfer.");
+                } else {
+                    Log.e("Main Activity", "No File URI available for file.");
+                }
+            }
+            else{
+                Log.e("Main Activity", "No File selected for transfer.");
+            }
+            // Get a URI for the File and add it to the list of URIs
+        }
         @Override
         public Uri[] createBeamUris(NfcEvent event) {
             return mFileUris;
         }
     }
-    
-    /** Called when the user taps the Send button */
-    public void sendMessage(View view) {
 
-        Intent intent = new Intent(this, DisplayMessageActivity.class);
-        EditText editText = findViewById(R.id.editText);
+    public void browsePhotos(View view){
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+    }
 
-        editText.setOnEditorActionListener(new DoneOnEditorActionListener());
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-        String message = editText.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE, message);
-        startActivity(intent);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri uri = data.getData();
+            realPath = RealPathUtil.getRealPathFromURI(this, uri);
+            Log.i("Main Activity", "Real Path: "+realPath);
+
+            // Capture the layout's TextView and set the string as its text
+            edittext.setText(realPath);
+
+        }
     }
 
 }

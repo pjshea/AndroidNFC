@@ -8,19 +8,14 @@ https://yuml.me/diagram/activity/draw
 
 
 Configure following before running :
-1. Please hardcode the file name until we get UI:
-
-	In MainActivity.java,
-	In class "FileUriCallback" ---> String transferFile = "xxxx";
-
-2. In AndroidManifest.xml, please change android:minSdkVersion as per your device's version.
+1. In AndroidManifest.xml, please change android:minSdkVersion as per your device's version.
 	Please note: NFC is supported only for Android 4.1 or higher
-	
-Currently, only pictures from this location (/storage/emulated/0/Pictures) are available for transfer.
 
+Dynamic selection of single image and the transfer is implemented.
+	
 Next Steps:
 
-- [ ] 1. Create UI/code for selecting pictures from the file explorer to share. Should open the default picture location. - Parth
+- [x] 1. Create UI/code for selecting pictures from the file explorer to share. - Parth
 - [ ] 2. Create UI/code for selecting messages from ??? to share.
 - [ ] 3. Create UI/code for selecting contacts to share
 - [ ] 4. Developing backend code to share messages.
