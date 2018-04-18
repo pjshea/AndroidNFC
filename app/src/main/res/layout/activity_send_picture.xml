@@ -1,0 +1,51 @@
+ <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        >
+        <TextView android:id="@+id/textview"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="High Speed NFC"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:layout_marginTop="10dp"
+            />
+        <RelativeLayout android:id="@+id/relativeLayout1"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content">
+
+            <EditText
+                android:id="@+id/editText"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="15dp"
+                android:layout_toLeftOf="@+id/skipButton"
+                android:ems="10"
+                android:hint="FilePath"
+                android:imeOptions="actionDone"
+                android:inputType="textUri|textPersonName"></EditText>
+
+            <Button
+                android:id="@+id/skipButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="10dp"
+                android:onClick="browsePhotos"
+                android:text="Browse"
+                android:textSize="18dp"></Button>
+        </RelativeLayout>
+
+     <Button
+         android:layout_width="fill_parent"
+         android:layout_height="60dp"
+         android:onClick="send"
+         android:padding="8dp"
+         android:text="Send Picture" />
+
+ </LinearLayout>
+
