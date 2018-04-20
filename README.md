@@ -17,7 +17,7 @@ Next Steps:
 
 - [x] 1. Create UI/code for selecting pictures from the file explorer to share. - Parth
 - [ ] 2. Create UI/code for selecting messages to share - Pat
-- [ ] 3. Create UI/code for selecting contacts to share - Pat
+- [x] 3. Create UI/code for selecting contacts to share - Parth
 - [ ] 4. Developing backend code to share messages - Pat
 - [ ] 5. Developing backend code to share contacts - Sichen
 - [x] 6. Developing backend code to share pictures - Parth
