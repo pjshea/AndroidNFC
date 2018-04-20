@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void browseContacts(View view){
         Intent intent= new Intent(Intent.ACTION_PICK,  ContactsContract.Contacts.CONTENT_URI);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_CONTACT);
+        startActivityForResult(Intent.createChooser(intent, "Select Contact"), PICK_CONTACT);
     }
 
 }
