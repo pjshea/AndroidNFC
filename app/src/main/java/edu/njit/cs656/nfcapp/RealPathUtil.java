@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 
@@ -22,5 +23,24 @@ public class RealPathUtil {
                 cursor.close();
             }
         }
+    }
+
+    public static String getRealPathFromContactURI(Context context, Uri uri){
+        Cursor cursor = null;
+        try {
+
+            String[] proj = new String[] { ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup.LOOKUP_KEY };
+            cursor = context.getContentResolver().query(uri, proj, null, null, null);
+
+            int column_index = cursor.getColumnIndexOrThrow(ContactsContract.PhoneLookup.DISPLAY_NAME);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+
     }
 }
