@@ -1,17 +1,23 @@
  <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
+     xmlns:app="http://schemas.android.com/apk/res-auto"
+     xmlns:tools="http://schemas.android.com/tools"
+     android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         >
 
-     <TextView android:id="@+id/textview"
-         android:layout_width="fill_parent"
-         android:layout_height="512dp"
-         android:text="This should be a scrollable window that displays the contacts sorted in alphabetical order"
-         android:textSize="18dp"
-         android:gravity="center"
-         android:layout_marginTop="10dp"
-         />
+     <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+         android:layout_width="match_parent"
+         android:layout_height="448dp">
+
+         <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+             android:id="@+id/contactslist"
+             android:layout_width="382dp"
+             android:layout_height="0dp"
+             app:layout_constraintBottom_toBottomOf="parent"
+             tools:layout_editor_absoluteX="0dp" />
+
+     </android.support.constraint.ConstraintLayout>
 
      <Button
          android:id="@+id/button3"

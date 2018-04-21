@@ -68,7 +68,7 @@ public class MainActivity extends Activity {
 
     public void sendContact(View view) {
 
-        Intent inent = new Intent(this, SendPictureActivity.class);
+        Intent inent = new Intent(this, SendContactActivity.class);
 
         // calling an activity using <intent-filter> action name
         //  Intent inent = new Intent("com.hmkcode.android.ANOTHER_ACTIVITY");
