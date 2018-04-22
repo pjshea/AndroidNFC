@@ -79,7 +79,7 @@
         android:id="@+id/sendContactButton"
         android:layout_width="fill_parent"
         android:layout_height="60dp"
-        android:onClick="senContact"
+        android:onClick="sendContact"
         android:padding="8dp"
         android:text="Send Contact" />
 
