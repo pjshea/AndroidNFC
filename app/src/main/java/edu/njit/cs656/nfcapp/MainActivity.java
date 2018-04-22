@@ -33,13 +33,16 @@ public class MainActivity extends AppCompatActivity {
     private EditText edittext;
     private Uri[] mFileUris = new Uri[10];
     private NfcAdapter mNfcAdapter;
-    private FileUriCallback mFileUriCallback;;
+    private FileUriCallback mFileUriCallback;
+    private ContactFileUriCallback contactFileUriCallback;
 
     private int PICK_IMAGE_REQUEST = 1;
     private String realPath = "";
 
     private EditText contactPath;
     private int PICK_CONTACT = 2;
+
+    private Uri contactURI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == PICK_CONTACT && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri uri = data.getData();
+            contactURI = uri;
             realPath = RealPathUtil.getRealPathFromContactURI(this, uri);
             Log.i("Main Activity", "Real Path: "+realPath);
 
@@ -158,6 +162,51 @@ public class MainActivity extends AppCompatActivity {
     public void browseContacts(View view){
         Intent intent= new Intent(Intent.ACTION_PICK,  ContactsContract.Contacts.CONTENT_URI);
         startActivityForResult(Intent.createChooser(intent, "Select Contact"), PICK_CONTACT);
+    }
+
+
+
+
+    public void sendContact(View view) {
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+
+        if(!mNfcAdapter.isEnabled()){
+            // NFC is disabled, show the settings UI
+            // to enable NFC
+            Toast.makeText(this, "Please enable NFC.",
+                    Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(Settings.ACTION_NFC_SETTINGS));
+        }
+        // Check whether Android Beam feature is enabled on device
+        else if(!mNfcAdapter.isNdefPushEnabled()) {
+            // Android Beam is disabled, show the settings UI
+            // to enable Android Beam
+            Toast.makeText(this, "Please enable Android Beam.",
+                    Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(Settings.ACTION_NFCSHARING_SETTINGS));
+        }
+        else {
+            contactFileUriCallback = new ContactFileUriCallback();
+            mNfcAdapter.setBeamPushUrisCallback(contactFileUriCallback, this);
+        }
+    }
+
+    private class ContactFileUriCallback implements
+            NfcAdapter.CreateBeamUrisCallback {
+        public ContactFileUriCallback() {
+            if (contactURI != null) {
+                mFileUris[0] = contactURI;
+                System.out.println("FileUri: " + contactURI);
+                Log.i("Main Activity", "File URI available for transfer.");
+            } else {
+                Log.e("Main Activity", "No File URI available for file.");
+            }
+            // Add URI to the list of URIs
+        }
+        @Override
+        public Uri[] createBeamUris(NfcEvent event) {
+            return mFileUris;
+        }
     }
 
 }
