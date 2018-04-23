@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.logging.Logger;
 
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private Uri[] mFileUris = new Uri[10];
     private NfcAdapter mNfcAdapter;
     private FileUriCallback mFileUriCallback;
-    private ContactFileUriCallback contactFileUriCallback;
+    //private ContactFileUriCallback contactFileUriCallback;
 
     private int PICK_IMAGE_REQUEST = 1;
     private String realPath = "";
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText contactPath;
     private int PICK_CONTACT = 2;
 
-    private Uri contactURI;
+    //private Uri contactURI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,8 +150,14 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == PICK_CONTACT && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri uri = data.getData();
-            contactURI = uri;
-            realPath = RealPathUtil.getRealPathFromContactURI(this, uri);
+            //contactURI = uri;
+            try {
+                realPath = RealPathUtil.getRealPathFromContactURI(this, uri);
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+                contactPath.setText("wrong");
+
+            }
             Log.i("Main Activity", "Real Path: "+realPath);
 
             contactPath.setText(realPath);
@@ -160,12 +167,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void browseContacts(View view){
-        Intent intent= new Intent(Intent.ACTION_PICK,  ContactsContract.Contacts.CONTENT_URI);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_CONTACT);
+        //Intent intent= new Intent(Intent.ACTION_PICK,  ContactsContract.Contacts.CONTENT_URI);
+        Intent intent = new Intent();
+        intent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE);
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Contact"), PICK_CONTACT);
     }
 
 
-
+    /*
 
     public void sendContact(View view) {
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
@@ -191,6 +201,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     private class ContactFileUriCallback implements
             NfcAdapter.CreateBeamUrisCallback {
         public ContactFileUriCallback() {
@@ -209,4 +220,5 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    */
 }
