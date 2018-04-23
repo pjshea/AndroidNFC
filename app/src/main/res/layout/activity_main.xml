@@ -60,6 +60,42 @@
          android:padding="8dp"
          android:text="Send Contact"
          android:textSize="24dp" />
+  <RelativeLayout android:id="@+id/relativeLayout3"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content">
+
+        <EditText
+            android:id="@+id/textPath"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignTop="@+id/browseTextButton"
+            android:layout_toStartOf="@+id/browseTextButton"
+            android:ems="10"
+            android:hint="TextPath"
+            android:imeOptions="actionDone"
+            android:inputType="textUri|textPersonName"/>
+
+        <Button
+            android:id="@+id/browseTextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="68dp"
+            android:onClick="browseText"
+            android:text="Browse"
+            android:textSize="18dp" />
+
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/sendTextButton"
+        android:layout_width="fill_parent"
+        android:layout_height="60dp"
+        android:onClick="sendFile"
+        android:padding="8dp"
+        android:text="Send Text" />
 
  </LinearLayout>
 
