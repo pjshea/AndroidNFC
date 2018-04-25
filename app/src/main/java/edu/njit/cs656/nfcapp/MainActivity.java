@@ -221,4 +221,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     */
+
+    public void sendMessage(View view) {
+
+        Intent inent = new Intent(this, SendMessageActivity.class);
+
+        // calling an activity using <intent-filter> action name
+        //  Intent inent = new Intent("com.hmkcode.android.ANOTHER_ACTIVITY");
+
+        startActivity(inent);
+    }
 }

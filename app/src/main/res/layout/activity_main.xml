@@ -83,4 +83,21 @@
         android:padding="8dp"
         android:text="Send Contact" />
 
+
+    <RelativeLayout android:id="@+id/relativeLayout2"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="48dp">
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="match_parent"
+        android:layout_height="165dp"
+        android:onClick="sendMessage"
+        android:padding="8dp"
+        android:text="Send Message"
+        android:textSize="24dp"  />
+
+    </RelativeLayout>
+
 </LinearLayout>
