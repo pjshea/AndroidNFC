@@ -44,7 +44,7 @@ public class SendPictureActivity extends AppCompatActivity {
         // Check whether NFC is available on device
         if (!pm.hasSystemFeature(PackageManager.FEATURE_NFC)) {
             // NFC is not available on the device.
-            Toast.makeText(this, "The device does not has NFC hardware.",
+            Toast.makeText(this, "The device does not have NFC hardware.",
                     Toast.LENGTH_SHORT).show();
         }
         // Check whether device is running Android 4.1 or higher
