@@ -1,11 +1,14 @@
 package edu.njit.cs656.nfcapp;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
 import android.os.Build;
@@ -24,11 +27,12 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.logging.Logger;
 
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  {
 
     private EditText edittext;
     private Uri[] mFileUris = new Uri[10];
@@ -40,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
     private EditText contactPath;
     private int PICK_CONTACT = 2;
+    private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +101,54 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    public void sendContact(View view) {
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+
+        if(!mNfcAdapter.isEnabled()){
+            // NFC is disabled, show the settings UI
+            // to enable NFC
+            Toast.makeText(this, "Please enable NFC.",
+                    Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(Settings.ACTION_NFC_SETTINGS));
+        }
+        // Check whether Android Beam feature is enabled on device
+        else if(!mNfcAdapter.isNdefPushEnabled()) {
+            // Android Beam is disabled, show the settings UI
+            // to enable Android Beam
+            Toast.makeText(this, "Please enable Android Beam.",
+                    Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(Settings.ACTION_NFCSHARING_SETTINGS));
+        }
+        else {
+//            mFileUriCallback = new FileUriCallback();
+//            mNfcAdapter.setBeamPushUrisCallback(mFileUriCallback, this);
+            // Register callback to set NDEF message
+            mNfcAdapter.setNdefPushMessageCallback(new NfcAdapter.CreateNdefMessageCallback() {
+                @Override
+                public NdefMessage createNdefMessage(NfcEvent nfcEvent) {
+                    return new NdefMessage(new NdefRecord[] { getContactRecord() });
+                }
+            }, this);
+
+            // Register callback to listen for message-sent success
+            //mNfcAdapter.setOnNdefPushCompleteCallback(this, this);
+        }
+    }
+
+    private NdefRecord getContactRecord()
+    {
+
+            byte[] uriField = realPath.getBytes(Charset.forName("US-ASCII"));
+            byte[] payload = new byte[uriField.length + 1];  // Add 1 for the URI Prefix.
+            System.arraycopy(uriField, 0, payload, 1, uriField.length);  // Append URI to payload.
+            NdefRecord nfcRecord = new NdefRecord(
+                    NdefRecord.TNF_MIME_MEDIA, "text/vcard".getBytes(), new byte[0], payload);
+            Log.i("Main Activity", "Returning nfcRecord: "+nfcRecord.toString());
+            return nfcRecord;
+
+    }
+
     private class FileUriCallback implements
             NfcAdapter.CreateBeamUrisCallback {
         public FileUriCallback() {
@@ -104,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
                 File requestFile = new File(realPath);
                 requestFile.setReadable(true, false);
                 Uri fileUri = Uri.fromFile(requestFile);
-                System.out.println("FileUri: "+fileUri);
+                Log.i("FileUri: ", ""+fileUri);
                 if (fileUri != null) {
                     mFileUris[0] = fileUri;
                     Log.i("Main Activity", "File URI available for transfer.");
@@ -145,7 +198,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (requestCode == PICK_CONTACT && resultCode == RESULT_OK && data != null && data.getData() != null) {
+
             Uri uri = data.getData();
+            //realPath = uri.getPath();
             realPath = RealPathUtil.getRealPathFromContactURI(this, uri);
             Log.i("Main Activity", "Real Path: "+realPath);
 
