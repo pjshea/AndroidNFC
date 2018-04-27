@@ -123,8 +123,6 @@ public class MainActivity extends AppCompatActivity  {
             startActivity(new Intent(Settings.ACTION_NFCSHARING_SETTINGS));
         }
         else {
-//            mFileUriCallback = new FileUriCallback();
-//            mNfcAdapter.setBeamPushUrisCallback(mFileUriCallback, this);
             // Register callback to set NDEF message
             mNfcAdapter.setNdefPushMessageCallback(new NfcAdapter.CreateNdefMessageCallback() {
                 @Override
@@ -140,7 +138,6 @@ public class MainActivity extends AppCompatActivity  {
 
     private NdefRecord getContactRecord()
     {
-
             byte[] uriField = realPath.getBytes(Charset.forName("US-ASCII"));
             byte[] payload = new byte[uriField.length + 1];  // Add 1 for the URI Prefix.
             System.arraycopy(uriField, 0, payload, 1, uriField.length);  // Append URI to payload.
@@ -202,7 +199,6 @@ public class MainActivity extends AppCompatActivity  {
         if (requestCode == PICK_CONTACT && resultCode == RESULT_OK && data != null && data.getData() != null) {
 
             Uri uri = data.getData();
-            //realPath = uri.getPath();
             realPath = RealPathUtil.getRealPathFromContactURI(this, uri);
             Log.i("Main Activity", "Real Path: "+realPath);
 

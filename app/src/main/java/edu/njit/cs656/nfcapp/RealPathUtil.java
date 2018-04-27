@@ -35,16 +35,12 @@ public class RealPathUtil {
 
             String[] proj = {ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup.LOOKUP_KEY  };
             cursor = context.getContentResolver().query(uri,  proj, null, null, null);
-            //int column_index = cursor.getColumnIndexOrThrow(ContactsContract.PhoneLookup.DISPLAY_NAME);
-            //String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)); // DISPLAY_NAME_PRIMARY will use other info if their name is not available
             cursor.moveToFirst();
             String lookupKey = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY));
 
             if (cursor != null) {
                 cursor.close();
             }
-            //return cursor.getString(column_index);
-
 
         StringBuilder sb = new StringBuilder();
         AssetFileDescriptor fd = null;
