@@ -17,6 +17,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListAdapter;
@@ -46,27 +47,6 @@ public class SendMessageActivity extends AppCompatActivity {
     private NfcAdapter mNfcAdapter;
 
     private static final int MY_PERMISSIONS_REQUEST_READ_SMS = 1;
-
-    private String[][] StatesAndCapitals =
-            {{"Alabama","Montgomery"},
-                    {"Alaska","Juneau"},
-                    {"Arizona","Phoenix"},
-                    {"Arkansas","Little Rock"},
-                    {"California","Sacramento"},
-                    {"Colorado","Denver"},
-                    {"Connecticut","Hartford"},
-                    {"Delaware","Dover"},
-                    {"Florida","Tallahassee"},
-                    {"Georgia","Atlanta"},
-                    {"Hawaii","Honolulu"},
-                    {"Idaho","Boise"},
-                    {"Illinois","Springfield"},
-                    {"Indiana","Indianapolis"},
-                    {"Iowa","Des Moines"},
-                    {"Kansas","Topeka"},
-                    {"Kentucky","Frankfort"},
-                    {"Louisiana","Baton Rouge"},
-                    {"Maine","Augusta"}};
 
     ArrayList<HashMap<String,String>> messages = new ArrayList<HashMap<String,String>>();
     private SimpleAdapter adapter;
@@ -149,11 +129,19 @@ public class SendMessageActivity extends AppCompatActivity {
                 new int[] {R.id.address, R.id.body});
 
         ((ListView)findViewById(R.id.lstMessages)).setAdapter(adapter);
+
+        lstMessages.setOnItemClickListener(new returnClickedItem());
     }
 
-    /** Called when the user taps the Send button */
-    public void send(View view) {
-        Toast.makeText(this, "SEND MESSAGE", Toast.LENGTH_LONG).show();
+    class returnClickedItem implements AdapterView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            HashMap<String, String> msg =  (HashMap<String, String>) parent.getItemAtPosition(position);
 
+            Intent data = new Intent();
+            data.putExtra("lines",msg);
+            setResult(RESULT_OK, data);
+            finish();
+        }
     }
 }

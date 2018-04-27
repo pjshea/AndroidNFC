@@ -25,6 +25,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
@@ -35,15 +36,15 @@ public class MainActivity extends AppCompatActivity {
     private Uri[] mFileUris = new Uri[10];
     private NfcAdapter mNfcAdapter;
     private FileUriCallback mFileUriCallback;
-    //private ContactFileUriCallback contactFileUriCallback;
+
+    private String realPath = "";
+    private EditText contactPath;
 
     private int PICK_IMAGE_REQUEST = 1;
-    private String realPath = "";
-
-    private EditText contactPath;
     private int PICK_CONTACT = 2;
+    private int PICK_SMS = 3;
+    //public enum PickType { PICK_IMAGE_REQUEST, PICK_CONTACT, PICK_SMS };
 
-    //private Uri contactURI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
 
         contactPath = findViewById(R.id.contactPath);
         contactPath.setEnabled(false);
+
+
     }
 
     public void sendFile(View view) {
@@ -164,6 +167,18 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+        if (requestCode == PICK_SMS && resultCode == RESULT_OK && data != null) {
+            HashMap<String, String> msg = (HashMap<String, String>)data.getSerializableExtra("lines");
+
+            // Capture the layout's TextView and set the string as its text
+            TextView address = findViewById(R.id.address);
+            address.setText(msg.get("line1"));
+
+            TextView body = findViewById(R.id.body);
+            body.setText(msg.get("line2"));
+
+        }
+
     }
 
     public void browseContacts(View view){
@@ -175,9 +190,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    /*
 
-    public void sendContact(View view) {
+
+    public void browseMessages(View view) {
+
+        Intent inent = new Intent(this, SendMessageActivity.class);
+
+        //startActivity(inent);
+        startActivityForResult(inent, PICK_SMS);
+
+    }
+
+    public void sendMessage(View view) {
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
         if(!mNfcAdapter.isEnabled()){
@@ -195,40 +219,5 @@ public class MainActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT).show();
             startActivity(new Intent(Settings.ACTION_NFCSHARING_SETTINGS));
         }
-        else {
-            contactFileUriCallback = new ContactFileUriCallback();
-            mNfcAdapter.setBeamPushUrisCallback(contactFileUriCallback, this);
-        }
-    }
-
-
-    private class ContactFileUriCallback implements
-            NfcAdapter.CreateBeamUrisCallback {
-        public ContactFileUriCallback() {
-            if (contactURI != null) {
-                mFileUris[0] = contactURI;
-                System.out.println("FileUri: " + contactURI);
-                Log.i("Main Activity", "File URI available for transfer.");
-            } else {
-                Log.e("Main Activity", "No File URI available for file.");
-            }
-            // Add URI to the list of URIs
-        }
-        @Override
-        public Uri[] createBeamUris(NfcEvent event) {
-            return mFileUris;
-        }
-    }
-
-    */
-
-    public void sendMessage(View view) {
-
-        Intent inent = new Intent(this, SendMessageActivity.class);
-
-        // calling an activity using <intent-filter> action name
-        //  Intent inent = new Intent("com.hmkcode.android.ANOTHER_ACTIVITY");
-
-        startActivity(inent);
     }
 }
