@@ -21,8 +21,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:layout_marginTop="15dp"
-            android:layout_toStartOf="@+id/skipButton"
+            android:layout_toLeftOf="@+id/skipButton"
             android:ems="10"
             android:hint="ImagePath"
             android:imeOptions="actionDone"
@@ -46,17 +47,18 @@
         android:padding="8dp"
         android:text="Send File" />
 
-    <RelativeLayout android:id="@+id/relativeLayout2"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
         <EditText
             android:id="@+id/contactPath"
-            android:layout_width="wrap_content"
+            android:layout_width="311dp"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignTop="@+id/browseButton"
-            android:layout_toStartOf="@+id/browseButton"
             android:ems="10"
             android:hint="ContactPath"
             android:imeOptions="actionDone"
@@ -76,10 +78,11 @@
     </RelativeLayout>
 
     <Button
-        android:id="@+id/sendContactButton"
         android:layout_width="fill_parent"
         android:layout_height="60dp"
-        android:onClick="sendFile"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:onClick="sendContact"
         android:padding="8dp"
         android:text="Send Contact" />
 
