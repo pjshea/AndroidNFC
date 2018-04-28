@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.nio.charset.Charset;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private int PICK_CONTACT = 2;
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
 
+    TextView smsAddress,smsBody;
     private int PICK_SMS = 3;
     //public enum PickType { PICK_IMAGE_REQUEST, PICK_CONTACT, PICK_SMS };
 
@@ -65,18 +67,18 @@ public class MainActivity extends AppCompatActivity {
         if (!pm.hasSystemFeature(PackageManager.FEATURE_NFC)) {
             // NFC is not available on the device.
             Toast.makeText(this, "The device does not has NFC hardware.",
-                    Toast.LENGTH_SHORT).show();
+                    Toast.LENGTH_LONG).show();
         }
         // Check whether device is running Android 4.1 or higher
         else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
             // Android Beam feature is not supported.
             Toast.makeText(this, "Android Beam is not supported.",
-                    Toast.LENGTH_SHORT).show();
+                    Toast.LENGTH_LONG).show();
         }
         else {
             // NFC and Android Beam file transfer is supported.
             Toast.makeText(this, "Android Beam is supported on your device.",
-                    Toast.LENGTH_SHORT).show();
+                    Toast.LENGTH_LONG).show();
         }
 
         super.onCreate(savedInstanceState);
@@ -86,6 +88,10 @@ public class MainActivity extends AppCompatActivity {
 
         contactPath = findViewById(R.id.contactPath);
         contactPath.setEnabled(false);
+
+        smsAddress = findViewById(R.id.address);
+        smsBody = findViewById(R.id.body);
+
 
     }
 
@@ -108,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
 
             // Capture the layout's TextView and set the string as its text
             edittext.setText(realPath);
-
         }
 
         if (requestCode == PICK_CONTACT && resultCode == RESULT_OK && data != null && data.getData() != null) {
@@ -118,19 +123,14 @@ public class MainActivity extends AppCompatActivity {
             Log.i("Main Activity", "Real Path: "+realPath);
 
             contactPath.setText(realPath);
-
         }
 
         if (requestCode == PICK_SMS && resultCode == RESULT_OK && data != null) {
             HashMap<String, String> msg = (HashMap<String, String>)data.getSerializableExtra("lines");
 
             // Capture the layout's TextView and set the string as its text
-            TextView address = findViewById(R.id.address);
-            address.setText(msg.get("line1"));
-
-            TextView body = findViewById(R.id.body);
-            body.setText(msg.get("line2"));
-
+            smsAddress.setText(msg.get("line1"));
+            smsBody.setText(msg.get("line2"));
         }
     }
 
@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
             // NFC is disabled, show the settings UI
             // to enable NFC
             Toast.makeText(this, "Please enable NFC.",
-                    Toast.LENGTH_SHORT).show();
+                    Toast.LENGTH_LONG).show();
             startActivity(new Intent(Settings.ACTION_NFC_SETTINGS));
         }
         // Check whether Android Beam feature is enabled on device
@@ -183,12 +183,13 @@ public class MainActivity extends AppCompatActivity {
             // Android Beam is disabled, show the settings UI
             // to enable Android Beam
             Toast.makeText(this, "Please enable Android Beam.",
-                    Toast.LENGTH_SHORT).show();
+                    Toast.LENGTH_LONG).show();
             startActivity(new Intent(Settings.ACTION_NFCSHARING_SETTINGS));
         }
         else {
             mFileUriCallback = new FileUriCallback();
             mNfcAdapter.setBeamPushUrisCallback(mFileUriCallback, this);
+            Toast.makeText(this, "Place both devices’ backs against each other.", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -205,7 +206,6 @@ public class MainActivity extends AppCompatActivity {
                 NdefRecord.TNF_MIME_MEDIA, "text/vcard".getBytes(), new byte[0], payload);
         Log.i("Main Activity", "Returning nfcRecord: "+nfcRecord.toString());
         return nfcRecord;
-
     }
 
     /**
@@ -246,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
             // NFC is disabled, show the settings UI
             // to enable NFC
             Toast.makeText(this, "Please enable NFC.",
-                    Toast.LENGTH_SHORT).show();
+                    Toast.LENGTH_LONG).show();
             startActivity(new Intent(Settings.ACTION_NFC_SETTINGS));
         }
         // Check whether Android Beam feature is enabled on device
@@ -254,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
             // Android Beam is disabled, show the settings UI
             // to enable Android Beam
             Toast.makeText(this, "Please enable Android Beam.",
-                    Toast.LENGTH_SHORT).show();
+                    Toast.LENGTH_LONG).show();
             startActivity(new Intent(Settings.ACTION_NFCSHARING_SETTINGS));
         }
         else {
@@ -266,9 +266,32 @@ public class MainActivity extends AppCompatActivity {
                 }
             }, this);
 
+            Toast.makeText(this, "Place both devices’ backs against each other.", Toast.LENGTH_LONG).show();
+
             // Register callback to listen for message-sent success
             //mNfcAdapter.setOnNdefPushCompleteCallback(this, this);
         }
+    }
+
+    /**
+     * Create a TNF_WELL_KNOWN NDEF record for the text message selected
+     * @param payload String data to be added to the NdefRecord
+     * @param locale Locale to use
+     * @param encodeInUtf8 should be encoded in UTF8(true) or UTF16 (false)
+     * @return NdefRecord
+     */
+    public NdefRecord createTextRecord(String payload, Locale locale, boolean encodeInUtf8) {
+        byte[] langBytes = locale.getLanguage().getBytes(Charset.forName("US-ASCII"));
+        Charset utfEncoding = encodeInUtf8 ? Charset.forName("UTF-8") : Charset.forName("UTF-16");
+        byte[] textBytes = payload.getBytes(utfEncoding);
+        int utfBit = encodeInUtf8 ? 0 : (1 << 7);
+        char status = (char) (utfBit + langBytes.length);
+        byte[] data = new byte[1 + langBytes.length + textBytes.length];
+        data[0] = (byte) status;
+        System.arraycopy(langBytes, 0, data, 1, langBytes.length);
+        System.arraycopy(textBytes, 0, data, 1 + langBytes.length, textBytes.length);
+        NdefRecord record = new NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, new byte[0], data);
+        return record;
     }
 
     /**
@@ -276,12 +299,10 @@ public class MainActivity extends AppCompatActivity {
      * @param view
      */
     public void browseMessages(View view) {
-
         Intent inent = new Intent(this, SendMessageActivity.class);
 
         //startActivity(inent);
         startActivityForResult(inent, PICK_SMS);
-
     }
 
     /**
@@ -290,19 +311,29 @@ public class MainActivity extends AppCompatActivity {
      */
     public void sendMessage(View view) {
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        final String smsTextString = smsAddress.getText() + "\r\n" + smsBody.getText();
 
         if(!mNfcAdapter.isEnabled()){
             // NFC is disabled, show the settings UI to enable NFC
-            Toast.makeText(this, "Please enable NFC.",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please enable NFC.", Toast.LENGTH_LONG).show();
             startActivity(new Intent(Settings.ACTION_NFC_SETTINGS));
         }
         // Check whether Android Beam feature is enabled on device
         else if(!mNfcAdapter.isNdefPushEnabled()) {
             // Android Beam is disabled, show the settings UI to enable Android Beam
-            Toast.makeText(this, "Please enable Android Beam.",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please enable Android Beam.", Toast.LENGTH_LONG).show();
             startActivity(new Intent(Settings.ACTION_NFCSHARING_SETTINGS));
+        }
+        else
+        {
+            // Register callback to set NDEF message
+            mNfcAdapter.setNdefPushMessageCallback(new NfcAdapter.CreateNdefMessageCallback() {
+                @Override
+                public NdefMessage createNdefMessage(NfcEvent nfcEvent) {
+                    return new NdefMessage(new NdefRecord[] { createTextRecord(smsTextString, Locale.getDefault(), false) });
+                }
+            }, this);
+            Toast.makeText(this, "Place both devices’ backs against each other." + smsTextString, Toast.LENGTH_LONG).show();
         }
    }
 }
