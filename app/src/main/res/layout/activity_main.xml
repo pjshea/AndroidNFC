@@ -43,9 +43,9 @@
     <Button
         android:layout_width="fill_parent"
         android:layout_height="60dp"
-        android:onClick="sendFile"
+        android:onClick="sendPicture"
         android:padding="8dp"
-        android:text="Send File" />
+        android:text="Send Picture" />
 
 
     <RelativeLayout

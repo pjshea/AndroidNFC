@@ -53,6 +53,10 @@ public class MainActivity extends AppCompatActivity {
     private int PICK_SMS = 3;
     //public enum PickType { PICK_IMAGE_REQUEST, PICK_CONTACT, PICK_SMS };
 
+    /**
+     * Called when the main activity is first created.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -85,74 +89,49 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void sendFile(View view) {
-        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+    /**
+     * Getting a Result from the browse activities for pictures, messages, contacts
+     * @param requestCode The request code you passed to startActivityForResult()
+     * @param resultCode A result code specified by the second activity.
+     *                   This is either RESULT_OK if the operation was successful or
+     *                   RESULT_CANCELED if the user backed out or the operation failed for some reason.
+     * @param data An Intent that carries the result data - picture, contact, or SMS data.
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-        if(!mNfcAdapter.isEnabled()){
-            // NFC is disabled, show the settings UI
-            // to enable NFC
-            Toast.makeText(this, "Please enable NFC.",
-                    Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(Settings.ACTION_NFC_SETTINGS));
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri uri = data.getData();
+            realPath = RealPathUtil.getRealPathFromURI(this, uri);
+            Log.i("Main Activity", "Real Path: "+realPath);
+
+            // Capture the layout's TextView and set the string as its text
+            edittext.setText(realPath);
+
         }
-        // Check whether Android Beam feature is enabled on device
-        else if(!mNfcAdapter.isNdefPushEnabled()) {
-            // Android Beam is disabled, show the settings UI
-            // to enable Android Beam
-            Toast.makeText(this, "Please enable Android Beam.",
-                    Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(Settings.ACTION_NFCSHARING_SETTINGS));
+
+        if (requestCode == PICK_CONTACT && resultCode == RESULT_OK && data != null && data.getData() != null) {
+
+            Uri uri = data.getData();
+            realPath = RealPathUtil.getRealPathFromContactURI(this, uri);
+            Log.i("Main Activity", "Real Path: "+realPath);
+
+            contactPath.setText(realPath);
+
         }
-        else {
-            mFileUriCallback = new FileUriCallback();
-            mNfcAdapter.setBeamPushUrisCallback(mFileUriCallback, this);
+
+        if (requestCode == PICK_SMS && resultCode == RESULT_OK && data != null) {
+            HashMap<String, String> msg = (HashMap<String, String>)data.getSerializableExtra("lines");
+
+            // Capture the layout's TextView and set the string as its text
+            TextView address = findViewById(R.id.address);
+            address.setText(msg.get("line1"));
+
+            TextView body = findViewById(R.id.body);
+            body.setText(msg.get("line2"));
+
         }
-    }
-
-    public void sendContact(View view) {
-        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
-
-        if(!mNfcAdapter.isEnabled()){
-            // NFC is disabled, show the settings UI
-            // to enable NFC
-            Toast.makeText(this, "Please enable NFC.",
-                    Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(Settings.ACTION_NFC_SETTINGS));
-        }
-        // Check whether Android Beam feature is enabled on device
-        else if(!mNfcAdapter.isNdefPushEnabled()) {
-            // Android Beam is disabled, show the settings UI
-            // to enable Android Beam
-            Toast.makeText(this, "Please enable Android Beam.",
-                    Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(Settings.ACTION_NFCSHARING_SETTINGS));
-        }
-        else {
-            // Register callback to set NDEF message
-            mNfcAdapter.setNdefPushMessageCallback(new NfcAdapter.CreateNdefMessageCallback() {
-                @Override
-                public NdefMessage createNdefMessage(NfcEvent nfcEvent) {
-                    return new NdefMessage(new NdefRecord[] { getContactRecord() });
-                }
-            }, this);
-
-
-
-            // Register callback to listen for message-sent success
-            //mNfcAdapter.setOnNdefPushCompleteCallback(this, this);
-        }
-    }
-
-    private NdefRecord getContactRecord()
-    {
-            byte[] uriField = realPath.getBytes(Charset.forName("US-ASCII"));
-            byte[] payload = new byte[uriField.length + 1];  // Add 1 for the URI Prefix.
-            System.arraycopy(uriField, 0, payload, 1, uriField.length);  // Append URI to payload.
-            NdefRecord nfcRecord = new NdefRecord(
-                    NdefRecord.TNF_MIME_MEDIA, "text/vcard".getBytes(), new byte[0], payload);
-            Log.i("Main Activity", "Returning nfcRecord: "+nfcRecord.toString());
-            return nfcRecord;
-
     }
 
     private class FileUriCallback implements
@@ -189,43 +168,50 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    public void sendPicture(View view) {
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            Uri uri = data.getData();
-            realPath = RealPathUtil.getRealPathFromURI(this, uri);
-            Log.i("Main Activity", "Real Path: "+realPath);
-
-            // Capture the layout's TextView and set the string as its text
-            edittext.setText(realPath);
-
-    }
-
-        if (requestCode == PICK_CONTACT && resultCode == RESULT_OK && data != null && data.getData() != null) {
-
-            Uri uri = data.getData();
-            realPath = RealPathUtil.getRealPathFromContactURI(this, uri);
-            Log.i("Main Activity", "Real Path: "+realPath);
-
-            contactPath.setText(realPath);
-
+        if(!mNfcAdapter.isEnabled()){
+            // NFC is disabled, show the settings UI
+            // to enable NFC
+            Toast.makeText(this, "Please enable NFC.",
+                    Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(Settings.ACTION_NFC_SETTINGS));
         }
-
-        if (requestCode == PICK_SMS && resultCode == RESULT_OK && data != null) {
-            HashMap<String, String> msg = (HashMap<String, String>)data.getSerializableExtra("lines");
-
-            // Capture the layout's TextView and set the string as its text
-            TextView address = findViewById(R.id.address);
-            address.setText(msg.get("line1"));
-
-            TextView body = findViewById(R.id.body);
-            body.setText(msg.get("line2"));
-
+        // Check whether Android Beam feature is enabled on device
+        else if(!mNfcAdapter.isNdefPushEnabled()) {
+            // Android Beam is disabled, show the settings UI
+            // to enable Android Beam
+            Toast.makeText(this, "Please enable Android Beam.",
+                    Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(Settings.ACTION_NFCSHARING_SETTINGS));
+        }
+        else {
+            mFileUriCallback = new FileUriCallback();
+            mNfcAdapter.setBeamPushUrisCallback(mFileUriCallback, this);
         }
     }
 
+    /**
+     * Gets the URI to the to the contact VCF file
+     * @return An NDEF Record that contains the URI to the contact VCF file
+     */
+    private NdefRecord getContactRecord()
+    {
+        byte[] uriField = realPath.getBytes(Charset.forName("US-ASCII"));
+        byte[] payload = new byte[uriField.length + 1];  // Add 1 for the URI Prefix.
+        System.arraycopy(uriField, 0, payload, 1, uriField.length);  // Append URI to payload.
+        NdefRecord nfcRecord = new NdefRecord(
+                NdefRecord.TNF_MIME_MEDIA, "text/vcard".getBytes(), new byte[0], payload);
+        Log.i("Main Activity", "Returning nfcRecord: "+nfcRecord.toString());
+        return nfcRecord;
+
+    }
+
+    /**
+     * Starts the Intent to browse through the stored contacts on the device
+     * @param view
+     */
     public void browseContacts(View view){
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_CONTACTS)
@@ -249,7 +235,46 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(Intent.createChooser(intent, "Select Contact"), PICK_CONTACT);
     }
 
+    /**
+     * Push the NDef record with contact to the NFC device
+     * @param view
+     */
+    public void sendContact(View view) {
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
+        if(!mNfcAdapter.isEnabled()){
+            // NFC is disabled, show the settings UI
+            // to enable NFC
+            Toast.makeText(this, "Please enable NFC.",
+                    Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(Settings.ACTION_NFC_SETTINGS));
+        }
+        // Check whether Android Beam feature is enabled on device
+        else if(!mNfcAdapter.isNdefPushEnabled()) {
+            // Android Beam is disabled, show the settings UI
+            // to enable Android Beam
+            Toast.makeText(this, "Please enable Android Beam.",
+                    Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(Settings.ACTION_NFCSHARING_SETTINGS));
+        }
+        else {
+            // Register callback to set NDEF message
+            mNfcAdapter.setNdefPushMessageCallback(new NfcAdapter.CreateNdefMessageCallback() {
+                @Override
+                public NdefMessage createNdefMessage(NfcEvent nfcEvent) {
+                    return new NdefMessage(new NdefRecord[] { getContactRecord() });
+                }
+            }, this);
+
+            // Register callback to listen for message-sent success
+            //mNfcAdapter.setOnNdefPushCompleteCallback(this, this);
+        }
+    }
+
+    /**
+     * Start the SendMessageActivity to browse the text messages on the device.
+     * @param view
+     */
     public void browseMessages(View view) {
 
         Intent inent = new Intent(this, SendMessageActivity.class);
@@ -259,6 +284,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Push the NDef record with test message data to the NFC device
+     * @param view
+     */
     public void sendMessage(View view) {
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
